@@ -12,6 +12,8 @@
           <select v-model="selectType" @change="selectTemplate()" :disabled="checkSelectedItem">
             <option value="c2">c2</option>
             <option value="g2">g2</option>
+            <option value="c1">c1</option>
+            <option value="g1">g1</option>
           </select>
         </div>
         <div id="btn_save">
@@ -30,10 +32,12 @@
                   <input type="checkbox" id="checkboxInput" v-model="dropTarget[i].selected" @change="checkCheckbox(el.item)" />
               </div>
               <div class="num">File-{{el.item}}-Index-{{el.index}}-Temp_{{el.template}}</div>
-              <div class="dropTarget">
-                  <DropTargetComponent />
+              <div class="dropTarget" v-if="(el.template == 'c2') || (el.template == 'g2')">
+                  <DropTargetComponentC2G2 />
               </div>
-            
+              <div class="dropTarget" v-if="(el.template == 'c1') || (el.template == 'g1')">
+                  <DropTargetComponentC1G1 />
+              </div>
           </div>
       </div>
 
@@ -41,18 +45,20 @@
 </template>
 
 <script>
-import DropTargetComponent from '@/components/DropTargetComponent.vue'
+import DropTargetComponentC2G2 from '@/components/DropTargetComponentC2G2.vue'
+import DropTargetComponentC1G1 from '@/components/DropTargetComponentC1G1.vue'
 import html2canvas from 'html2canvas';
 export default {
   components: {
-    DropTargetComponent
+    DropTargetComponentC2G2,
+    DropTargetComponentC1G1
   },
   data () {
     return {
       dropTarget: [
                     {
                       item: 1,
-                      template: 'c2',
+                      template: 'c1',
                       index: 0,
                       selected: false,
                       delete: false
@@ -324,6 +330,7 @@ export default {
     selectTemplate() {
       let selectTemp = this.dropTarget.find((el) => el.selected == true && el.delete == false)
       selectTemp.template = this.selectType
+      selectTemp.selected = false
     },
     checkCheckbox(item) {
         this.resultSelect = []

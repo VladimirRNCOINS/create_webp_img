@@ -28,16 +28,11 @@
 </template>
 
 <script>
+    import loadFile from '@/mixins/loadFile.js'
+
     export default {
-        name: 'DropTargetComponent',
+        name: 'DropTargetComponentC2G2',
         methods: {
-            loadFile(event) {
-                var input = event.target
-                var wrapInput = input.parentNode
-                var imgWrapElement = wrapInput.nextElementSibling
-                var imgLoaded = imgWrapElement.querySelector(".loadImageResult")
-                imgLoaded.src = URL.createObjectURL(event.target.files[0])
-            },
             overLeftFile(event) {
                 event.stopPropagation()
                 if (!event.currentTarget.classList.contains('face_coin_magenta')) {
@@ -64,9 +59,6 @@
                 event.currentTarget.classList.remove('back_coin_blue');
             }
         },
+        mixins: [loadFile]
     }
 </script>
-
-<style>
-
-</style>
