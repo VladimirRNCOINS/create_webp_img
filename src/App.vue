@@ -246,7 +246,7 @@ export default {
                         ctx.shadowBlur = this.ctxSettings.shadowBlur;
                         this.ctxSettings.width = this.loadOneElementWidth
                         this.ctxSettings.height = this.loadOneElementHeight
-                        ctx.drawImage(image[ind], parseInt(this.ctxSettings.dx), parseInt(this.ctxSettings.dy), parseInt(this.ctxSettings.width), parseInt(this.ctxSettings.height)/*parseInt(this.ctxSettings.width), parseInt(this.ctxSettings.height)*/)
+                        ctx.drawImage(image[ind], parseInt(this.ctxSettings.dx), parseInt(this.ctxSettings.dy), parseInt(this.ctxSettings.width), parseInt(this.ctxSettings.height))
                         this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
                     }) 
                 }
