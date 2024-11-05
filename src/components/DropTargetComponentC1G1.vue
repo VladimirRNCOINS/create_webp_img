@@ -6,7 +6,7 @@
                     <input type="file" multiple accept="image/*" id="inputLeftDropTarget" @change="loadFile">
                 </div>
                 <div class="wrapLoadImg">
-                    <img class="loadImageResult" id="loadedLeftResult" />
+                    <img class="loadImageResult" id="loadedLeftResult" style="margin-left: 20px;" width='88%' height='88%' />
                 </div>
                 <div class="wrapCanvasLeft">
                     <canvas id="mainCanvasLeft"></canvas>
@@ -17,7 +17,7 @@
                     <input type="file" multiple accept="image/*" id="inputCenterDropTarget" @change="loadFile">
                 </div>
                 <div class="wrapLoadImg">
-                    <img class="loadImageResult" id="loadedLeftResult" />
+                    <img class="loadImageResult" id="loadedCenterResult" width='88%' height='88%' />
                 </div>
                 <div class="wrapCanvasLeft">
                     <canvas id="mainCanvasLeft"></canvas>
@@ -28,7 +28,7 @@
                     <input type="file" multiple accept="image/*" id="inputRightDropTarget" @change="loadFile">
                 </div>
                 <div class="wrapLoadImg">
-                    <img class="loadImageResult" id="loadedRightResult" />
+                    <img class="loadImageResult" id="loadedRightResult" style="margin-right: 20px;" width='88%' height='88%' />
                 </div>
                 <div class="wrapCanvas">
                     <canvas id="mainCanvasRight"></canvas>

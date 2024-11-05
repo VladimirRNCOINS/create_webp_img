@@ -307,9 +307,10 @@ export default {
       let lastElem = this.dropTarget[this.dropTarget.length - 1]
       let newItemValue = lastElem.item + 1
       let newIndexValue = lastElem.index +1
+      this.selectType = 'c2'
       this.dropTarget.push({
         item: newItemValue,
-        template: this.selectType,
+        template: 'c2',
         index: newIndexValue,
         selected: false,
         delete: false
