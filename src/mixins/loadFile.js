@@ -1,11 +1,10 @@
 export default {
     methods: {
         loadFile(event) {
-            
             var input = event.target
             var wrapInput = input.parentNode
-            console.log(wrapInput.parentNode.id)
             var imgWrapElement = wrapInput.nextElementSibling
+            wrapInput.previousElementSibling.remove()
             var imgLoaded = imgWrapElement.querySelector(".loadImageResult")
             imgLoaded.src = URL.createObjectURL(event.target.files[0])
             imgLoaded.onload = () => {
@@ -27,5 +26,41 @@ export default {
                 }
             }
         },
+        overLeftFile(event) {
+            event.stopPropagation()
+            if (!event.currentTarget.classList.contains('face_coin_magenta')) {
+                event.currentTarget.classList.add('face_coin_magenta')
+            }
+        },
+        leaveLeftFile(event) {
+            event.stopPropagation()
+            event.currentTarget.classList.remove('face_coin_magenta');
+        },
+        overRightFile(event) {
+            event.stopPropagation()
+            if (!event.currentTarget.classList.contains('back_coin_blue')) {
+                event.currentTarget.classList.add('back_coin_blue')
+            }
+        },
+        leaveRightFile(event) {
+            event.stopPropagation()
+            event.currentTarget.classList.remove('back_coin_blue');
+        },
+        overSlabFile(event) {
+            event.stopPropagation()
+            if (!event.currentTarget.classList.contains('slab_coin_green')) {
+                event.currentTarget.classList.add('slab_coin_green')
+            }
+        },
+        leaveSlabFile(event) {
+            event.stopPropagation()
+            event.currentTarget.classList.remove('slab_coin_green');
+        },
+        dropFile(event) {
+            event.stopPropagation()
+            event.currentTarget.classList.remove('face_coin_magenta');
+            event.currentTarget.classList.remove('back_coin_blue');
+            event.currentTarget.classList.remove('slab_coin_green');
+        }
     }
 }

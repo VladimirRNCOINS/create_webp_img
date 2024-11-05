@@ -1,7 +1,10 @@
 <template>
     <div id="outerWrapDropTarget">
         <div id="wrapDropTarget">
-            <div id="leftDropTargetC1G1">
+            <div id="leftDropTargetC1G1" @dragover.prevent="overSlabFile($event)" @dragleave.prevent="leaveSlabFile($event)" @drop="dropFile($event)">
+                <div class="side_sign">
+                    <span>L</span>
+                </div>
                 <div id="wrapLeftInput">
                     <input type="file" multiple accept="image/*" id="inputLeftDropTarget" @change="loadFile">
                 </div>
@@ -12,7 +15,10 @@
                     <canvas id="mainCanvasLeft"></canvas>
                 </div>
             </div>
-            <div id="centerDropTargetC1G1">
+            <div id="centerDropTargetC1G1" @dragover.prevent="overLeftFile($event)" @dragleave.prevent="leaveLeftFile($event)" @drop="dropFile($event)">
+                <div class="side_sign">
+                    <span>C</span>
+                </div>
                 <div id="wrapLeftInput">
                     <input type="file" multiple accept="image/*" id="inputCenterDropTarget" @change="loadFile">
                 </div>
@@ -23,7 +29,10 @@
                     <canvas id="mainCanvasLeft"></canvas>
                 </div>
             </div>
-            <div id="rightDropTargetC1G1">
+            <div id="rightDropTargetC1G1" @dragover.prevent="overRightFile($event)" @dragleave.prevent="leaveRightFile($event)" @drop="dropFile($event)">
+                <div class="side_sign">
+                    <span>R</span>
+                </div>
                 <div id="wrapRightInput">
                     <input type="file" multiple accept="image/*" id="inputRightDropTarget" @change="loadFile">
                 </div>
