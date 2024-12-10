@@ -58,7 +58,7 @@ export default {
       dropTarget: [
                     {
                       item: 1,
-                      template: 'c1',
+                      template: 'c2',
                       index: 0,
                       selected: false,
                       delete: false
