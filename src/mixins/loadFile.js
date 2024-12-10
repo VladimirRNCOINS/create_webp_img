@@ -4,7 +4,9 @@ export default {
             var input = event.target
             var wrapInput = input.parentNode
             var imgWrapElement = wrapInput.nextElementSibling
-            wrapInput.previousElementSibling.remove()
+            if (wrapInput.previousElementSibling) {
+                wrapInput.previousElementSibling.remove()
+            }
             var imgLoaded = imgWrapElement.querySelector(".loadImageResult")
             imgLoaded.src = URL.createObjectURL(event.target.files[0])
             imgLoaded.onload = () => {

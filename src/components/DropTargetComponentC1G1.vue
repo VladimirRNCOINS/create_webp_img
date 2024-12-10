@@ -25,8 +25,8 @@
                 <div class="wrapLoadImg">
                     <img class="loadImageResult" id="loadedCenterResult" width='88%' height='88%' />
                 </div>
-                <div class="wrapCanvasLeft">
-                    <canvas id="mainCanvasLeft"></canvas>
+                <div class="wrapCanvasCenter">
+                    <canvas id="mainCanvasCenter"></canvas>
                 </div>
             </div>
             <div id="rightDropTargetC1G1" @dragover.prevent="overRightFile($event)" @dragleave.prevent="leaveRightFile($event)" @drop="dropFile($event)">
@@ -37,7 +37,7 @@
                     <input type="file" multiple accept="image/*" id="inputRightDropTarget" @change="loadFile">
                 </div>
                 <div class="wrapLoadImg">
-                    <img class="loadImageResult" id="loadedRightResult" style="margin-right: 20px;" width='88%' height='88%' />
+                    <img class="loadImageResult" id="loadedRightResult" style="padding-left: 15px; margin-right: 30px;" width='88%' height='88%' />
                 </div>
                 <div class="wrapCanvas">
                     <canvas id="mainCanvasRight"></canvas>

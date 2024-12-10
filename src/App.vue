@@ -58,7 +58,7 @@ export default {
       dropTarget: [
                     {
                       item: 1,
-                      template: 'c2',
+                      template: 'c1',
                       index: 0,
                       selected: false,
                       delete: false
@@ -87,6 +87,22 @@ export default {
       coordXOneElement: null,
       coordYOneElement: null,
       elementSharpen: 7,
+
+      //settings for c1, g1 element
+      element_c1: {
+          ind_0: {
+              max_src_c1_width: 660,
+              max_src_c1_height: 880,
+              max_c1_width: 540,
+              max_c1_height: 758
+          },
+          ind_1: {
+              max_src_c1_width: 780,
+              max_src_c1_height: 880,
+              max_c1_width: 660,
+              max_c1_height: 758
+          }
+      },
 
       max_src_c2_width: 871,
       max_src_c2_height: 880,
@@ -206,11 +222,10 @@ export default {
     download() {
       let imgElements = document.querySelectorAll("#wrapDropTarget")
       imgElements.forEach( (elem, index) => {
-        this.localTargetElement = {}
-        this.getLocalDropTargetElement(index)
         //обнулить массив с промисами для одого элемента
         this.loadedPromiseImages = []
         this.getItemLoadElements(elem.childNodes)
+
         if (this.loadedPromiseImages.length) {
             elem.style.width = '1742px'
             elem.style.height = '880px'
@@ -218,15 +233,61 @@ export default {
             .then( (image) => {
                 if (elem.childNodes.length) {
                     elem.childNodes.forEach( (item, ind) => {
+
+                        //получить шаблон c1 или c2 или g1 или g2 для текущего набора изображений
+                        this.localTargetElement = {}
+                        this.getLocalDropTargetElement(index)
+
                         this.srcWidth = image[ind].naturalWidth
                         this.srcHeight = image[ind].naturalHeight
 
                         let itemCanvas = item.querySelector("canvas")
                         itemCanvas.width = this.srcWidth
                         itemCanvas.height = this.srcHeight
+
+                        if (this.localTargetElement.template == 'c1' || this.localTargetElement.template == 'g1') {
+                            if (ind == 0) {
+                                this.ratioOneElement = Math.min(this.element_c1.ind_0.max_c1_width / itemCanvas.width, this.element_c1.ind_0.max_c1_height / itemCanvas.height)
+                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+                                this.coordXOneElement = parseInt((this.element_c1.ind_0.max_src_c1_width - this.loadOneElementWidth) / 2)
+                                this.coordYOneElement = parseInt((this.element_c1.ind_0.max_src_c1_height - this.loadOneElementHeight) / 2)
+                                
+                                itemCanvas.width = this.loadOneElementWidth
+                                itemCanvas.height = this.loadOneElementHeight
+
+                                this.ctxSettings.dx = this.coordXOneElement
+                                this.ctxSettings.dy = this.coordYOneElement
+
+                                itemCanvas.width = 660
+                                itemCanvas.height = 880
+                            }
+                            if (ind == 1 || ind == 2) {
+                                this.ratioOneElement = Math.min(this.element_c1.ind_1.max_c1_width / itemCanvas.width, this.element_c1.ind_1.max_c1_height / itemCanvas.height)
+                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+
+                                if (ind == 1) {
+                                  this.coordXOneElement = 1
+                                }
+                                if (ind == 2) {
+                                  this.coordXOneElement = 15
+                                }
+                                this.coordYOneElement = parseInt((this.element_c1.ind_1.max_src_c1_height - this.loadOneElementHeight) / 2)
+                                
+                                itemCanvas.width = this.loadOneElementWidth
+                                itemCanvas.height = this.loadOneElementHeight
+
+                                this.ctxSettings.dx = this.coordXOneElement
+                                this.ctxSettings.dy = this.coordYOneElement
+
+                                itemCanvas.width = 780
+                                itemCanvas.height = 880
+                            }
+                        }
                         
                         if (this.localTargetElement.template == 'c2' || this.localTargetElement.template == 'g2') {
-                            this.ratioOneElement = Math.min(this.max_c2_width / itemCanvas.width, this.max_c2_height / itemCanvas.height);
+                            this.ratioOneElement = Math.min(this.max_c2_width / itemCanvas.width, this.max_c2_height / itemCanvas.height)
                             this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
                             this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
                             this.coordXOneElement = parseInt((this.max_src_c2_width - this.loadOneElementWidth) / 2)
