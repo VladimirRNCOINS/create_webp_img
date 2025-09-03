@@ -10,6 +10,8 @@
         </div>
         <div id="select_template">
           <select v-model="selectType" @change="selectTemplate()" :disabled="checkSelectedItem">
+            <option value="c3">c3</option>
+            <option value="g3">g3</option>
             <option value="c2">c2</option>
             <option value="g2">g2</option>
             <option value="c1">c1</option>
@@ -32,6 +34,9 @@
                   <input type="checkbox" id="checkboxInput" v-model="dropTarget[i].selected" @change="checkCheckbox(el.item)" />
               </div>
               <div class="num">File-{{el.item}}-Index-{{el.index}}-Temp_{{el.template}}</div>
+              <div class="dropTarget" v-if="(el.template == 'c3') || (el.template == 'g3')">
+                  <DropTargetComponentC3G3 />
+              </div>
               <div class="dropTarget" v-if="(el.template == 'c2') || (el.template == 'g2')">
                   <DropTargetComponentC2G2 />
               </div>
@@ -45,11 +50,13 @@
 </template>
 
 <script>
+import DropTargetComponentC3G3 from '@/components/DropTargetComponentC3G3.vue'
 import DropTargetComponentC2G2 from '@/components/DropTargetComponentC2G2.vue'
 import DropTargetComponentC1G1 from '@/components/DropTargetComponentC1G1.vue'
 import html2canvas from 'html2canvas';
 export default {
   components: {
+    DropTargetComponentC3G3,
     DropTargetComponentC2G2,
     DropTargetComponentC1G1
   },
@@ -58,7 +65,7 @@ export default {
       dropTarget: [
                     {
                       item: 1,
-                      template: 'c2',
+                      template: 'c3',
                       index: 0,
                       selected: false,
                       delete: false
@@ -66,7 +73,7 @@ export default {
                   ],
       fileName: '',
       localTargetElement: {},
-      selectType: 'c2',
+      selectType: 'c3',
       loadedPromiseImages: [],
       ctxSettings: {
           dx: 0,
@@ -108,6 +115,12 @@ export default {
       max_src_c2_height: 880,
       max_c2_width: 772,
       max_c2_height: 772,
+
+      // для среднего элемента c3, g3
+      max_src_c3_width: 348,
+      max_src_c3_height: 880,
+      max_c3_width: 142,
+      max_c3_height: 208,
 
       fullLoadItemImg: false,
       resultSelect: []
@@ -234,7 +247,7 @@ export default {
                 if (elem.childNodes.length) {
                     elem.childNodes.forEach( (item, ind) => {
 
-                        //получить шаблон c1 или c2 или g1 или g2 для текущего набора изображений
+                        //получить шаблон c1 или c2, c3 или g1 или g2, g3 для текущего набора изображений
                         this.localTargetElement = {}
                         this.getLocalDropTargetElement(index)
 
@@ -303,18 +316,62 @@ export default {
                             itemCanvas.height = 880
                         }
 
+                        if (this.localTargetElement.template == 'c3' || this.localTargetElement.template == 'g3') {
+                            if (ind == 0 || ind == 2) {
+                                this.ratioOneElement = Math.min(this.max_c2_width / itemCanvas.width, this.max_c2_height / itemCanvas.height)
+                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+                                this.coordXOneElement = parseInt((this.max_src_c2_width - this.loadOneElementWidth) / 2)
+                                this.coordYOneElement = parseInt((this.max_src_c2_height - this.loadOneElementHeight) / 2)
+
+                                itemCanvas.width = this.loadOneElementWidth
+                                itemCanvas.height = this.loadOneElementHeight
+
+                                this.ctxSettings.dx = this.coordXOneElement
+                                this.ctxSettings.dy = this.coordYOneElement
+
+                                itemCanvas.width = 871
+                                itemCanvas.height = 880
+                            }
+                            if (ind == 1) {
+                                this.ratioOneElement = Math.min(this.max_c3_width / itemCanvas.width, this.max_c3_height / itemCanvas.height)
+                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+                                this.coordXOneElement = parseInt((this.max_src_c3_width - this.loadOneElementWidth) / 2)
+                                this.coordYOneElement = 58
+
+                                itemCanvas.width = this.loadOneElementWidth
+                                itemCanvas.height = this.loadOneElementHeight
+
+                                this.ctxSettings.dx = this.coordXOneElement
+                                this.ctxSettings.dy = this.coordYOneElement
+
+                                itemCanvas.width = 348
+                                itemCanvas.height = 880
+                            }
+                        }
+
                         let ctx = itemCanvas.getContext('2d');
                         ctx.imageSmoothingQuality = "high";
-                        ctx.imageSmoothingEnabled = false;
+                        
                         ctx.scale(1, 1);
-                        ctx.shadowOffsetX = this.ctxSettings.shadowOffsetX;
-                        ctx.shadowOffsetY = this.ctxSettings.shadowOffsetY;
-                        ctx.shadowColor = this.ctxSettings.shadowColor;
-                        ctx.shadowBlur = this.ctxSettings.shadowBlur;
+                        if (((this.localTargetElement.template !== 'c3') && (ind !== 1)) || ((this.localTargetElement.template !== 'g3') && (ind !== 1))) {
+                            ctx.imageSmoothingEnabled = false;
+                            ctx.shadowOffsetX = this.ctxSettings.shadowOffsetX;
+                            ctx.shadowOffsetY = this.ctxSettings.shadowOffsetY;
+                            ctx.shadowColor = this.ctxSettings.shadowColor;
+                            ctx.shadowBlur = this.ctxSettings.shadowBlur;
+                        }
+                        else {
+                            ctx.imageSmoothingEnabled = true;
+                        }
                         this.ctxSettings.width = this.loadOneElementWidth
                         this.ctxSettings.height = this.loadOneElementHeight
                         ctx.drawImage(image[ind], parseInt(this.ctxSettings.dx), parseInt(this.ctxSettings.dy), parseInt(this.ctxSettings.width), parseInt(this.ctxSettings.height))
-                        this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
+
+                        if (((this.localTargetElement.template !== 'c3') && (ind !== 1)) || ((this.localTargetElement.template !== 'g3') && (ind !== 1))) {
+                            this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
+                        }
                     }) 
                 }
                 return elem
@@ -367,11 +424,11 @@ export default {
     plusElement() {
       let lastElem = this.dropTarget[this.dropTarget.length - 1]
       let newItemValue = lastElem.item + 1
-      let newIndexValue = lastElem.index +1
-      this.selectType = 'c2'
+      let newIndexValue = lastElem.index + 1
+      this.selectType = 'c3'
       this.dropTarget.push({
         item: newItemValue,
-        template: 'c2',
+        template: 'c3',
         index: newIndexValue,
         selected: false,
         delete: false

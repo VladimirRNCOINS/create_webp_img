@@ -202,6 +202,17 @@ img {
   min-height: 440px;
   z-index: 100002;
 }
+#centerDropTargetC3G3 {
+  position: absolute;
+  left: 40%;
+  right: 40%;
+  top: 0;
+  bottom: 0;
+  width: 20%;
+  height: 100%;
+  min-height: 440px;
+  z-index: 100000000;
+}
 .side_sign {
   display: flex;
   position: absolute;

@@ -18,6 +18,12 @@ export default {
                     imgLoaded.style.removeProperty("height")
                     imgLoaded.style.width = 88 + '%'
                 }
+                else if (wrapInput.parentNode.id == 'centerDropTargetC3G3') {
+                    imgLoaded.style.removeProperty("height")
+                    imgLoaded.style.width = 42 + '%'
+                    imgLoaded.style.position = 'absolute'
+                    imgLoaded.style.top = 34 + 'px'
+                }
                 else if (imgLoaded.naturalWidth < imgLoaded.naturalHeight) {
                     imgLoaded.style.removeProperty("width")
                     imgLoaded.style.height = 88 + '%'
