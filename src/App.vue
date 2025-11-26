@@ -119,8 +119,8 @@ export default {
       // для среднего элемента c3, g3
       max_src_c3_width: 348,
       max_src_c3_height: 880,
-      max_c3_width: 142,
-      max_c3_height: 208,
+      max_c3_width: 150,
+      max_c3_height: 210,
 
       fullLoadItemImg: false,
       resultSelect: []
@@ -371,6 +371,9 @@ export default {
 
                         if (((this.localTargetElement.template !== 'c3') && (ind !== 1)) || ((this.localTargetElement.template !== 'g3') && (ind !== 1))) {
                             this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
+                        }
+                        else {
+                            this.sharpen(ctx, this.ctxSettings.width+100, this.ctxSettings.height+100, this.elementSharpen * 0.1)
                         }
                     }) 
                 }
