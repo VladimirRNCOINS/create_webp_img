@@ -119,8 +119,8 @@ export default {
       // для среднего элемента c3, g3
       max_src_c3_width: 348,
       max_src_c3_height: 880,
-      max_c3_width: 150,
-      max_c3_height: 210,
+      max_c3_width: 158,
+      max_c3_height: 224,
 
       fullLoadItemImg: false,
       resultSelect: []
