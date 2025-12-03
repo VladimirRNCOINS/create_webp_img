@@ -369,13 +369,13 @@ export default {
                         this.ctxSettings.height = this.loadOneElementHeight
                         ctx.drawImage(image[ind], parseInt(this.ctxSettings.dx), parseInt(this.ctxSettings.dy), parseInt(this.ctxSettings.width), parseInt(this.ctxSettings.height))
 
-                        if (((this.localTargetElement.template !== 'c3') && (ind !== 1)) || ((this.localTargetElement.template !== 'g3') && (ind !== 1))) {
-                            this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
-                        }
-                        else {
+                        if (((this.localTargetElement.template == 'c3') && (ind == 1)) || ((this.localTargetElement.template == 'g3') && (ind == 1))) {
                             this.sharpen(ctx, this.ctxSettings.width+100, this.ctxSettings.height+100, this.elementSharpen * 0.1)
                         }
-                    }) 
+                        else {
+                            this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
+                        }
+                    })
                 }
                 return elem
             })
