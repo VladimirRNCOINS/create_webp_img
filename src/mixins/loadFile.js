@@ -1,15 +1,52 @@
 export default {
+    beforeDestroy() {
+        this.cleanupLoadedImageUrls()
+    },
     methods: {
+        revokeObjectUrlForImage(imgElement) {
+            if (!imgElement || !imgElement.dataset) {
+                return
+            }
+            var activeObjectUrl = imgElement.dataset.objectUrl
+            if (activeObjectUrl) {
+                URL.revokeObjectURL(activeObjectUrl)
+                delete imgElement.dataset.objectUrl
+            }
+        },
+        cleanupLoadedImageUrls() {
+            if (!this.$el) {
+                return
+            }
+            var loadedImages = this.$el.querySelectorAll('.loadImageResult')
+            if (loadedImages.length) {
+                loadedImages.forEach((imgElement) => {
+                    this.revokeObjectUrlForImage(imgElement)
+                    imgElement.onload = null
+                    imgElement.onerror = null
+                })
+            }
+        },
         loadFile(event) {
             var input = event.target
+            var file = input.files && input.files[0]
+            if (!file) {
+                return
+            }
             var wrapInput = input.parentNode
             var imgWrapElement = wrapInput.nextElementSibling
             if (wrapInput.previousElementSibling) {
                 wrapInput.previousElementSibling.remove()
             }
             var imgLoaded = imgWrapElement.querySelector(".loadImageResult")
-            imgLoaded.src = URL.createObjectURL(event.target.files[0])
+            this.revokeObjectUrlForImage(imgLoaded)
+            var imageObjectUrl = URL.createObjectURL(file)
+            imgLoaded.dataset.objectUrl = imageObjectUrl
+            var clearLoadHandlers = () => {
+                imgLoaded.onload = null
+                imgLoaded.onerror = null
+            }
             imgLoaded.onload = () => {
+                clearLoadHandlers()
                 imgLoaded.removeAttribute('width')
                 imgLoaded.removeAttribute('height')
                 if ((wrapInput.parentNode.id == 'centerDropTargetC1G1') ||
@@ -33,6 +70,12 @@ export default {
                     imgLoaded.style.width = 88 + '%'
                 }
             }
+            imgLoaded.onerror = () => {
+                clearLoadHandlers()
+                this.revokeObjectUrlForImage(imgLoaded)
+                imgLoaded.removeAttribute('src')
+            }
+            imgLoaded.src = imageObjectUrl
         },
         overLeftFile(event) {
             event.stopPropagation()

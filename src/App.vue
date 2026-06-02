@@ -137,14 +137,27 @@ export default {
   },
   methods: {
     loadItemImage(elem, elemId) {
-        return new Promise( (resolve) => {
+        return new Promise( (resolve, reject) => {
             let loadId = "#" + elemId
             let loadImgElement = elem.querySelector(loadId)
+            if (!loadImgElement || !loadImgElement.src) {
+                reject(new Error("Image source is missing for " + elemId))
+                return
+            }
             let newImg = new window.Image();
-            newImg.setAttribute("src", loadImgElement.src)
+            let cleanupImageHandlers = () => {
+                newImg.onload = null
+                newImg.onerror = null
+            }
             newImg.onload = () => {
+                cleanupImageHandlers()
                 resolve(newImg)
             }
+            newImg.onerror = () => {
+                cleanupImageHandlers()
+                reject(new Error("Failed to load image for " + elemId))
+            }
+            newImg.setAttribute("src", loadImgElement.src)
         })
     },
     checkFullImgLoadsInItemLoadElements(itemElements) {
@@ -390,28 +403,44 @@ export default {
             })
             .then( (elem) => {
                 let fileName = this.fileName
-                html2canvas(elem, {logging : true, allowTaint: true, backgroundColor: "rgba(0,0,0,0)"})
-                .then(function (canvas) {
-                  let canvasImage = canvas.toDataURL("image/webp", 1)
-                  let anchor = document.createElement('a')
-                  anchor.setAttribute("href", canvasImage)
-                  anchor.setAttribute("download", fileName + ".webp")
-                  anchor.click()
-                  anchor.remove()
+                return html2canvas(elem, {logging : true, allowTaint: true, backgroundColor: "rgba(0,0,0,0)"})
+                .then((canvas) => {
+                  return new Promise((resolve, reject) => {
+                    canvas.toBlob((blob) => {
+                      if (!blob) {
+                        reject(new Error("Failed to create webp blob"))
+                        return
+                      }
+                      let downloadObjectUrl = URL.createObjectURL(blob)
+                      let anchor = document.createElement('a')
+                      anchor.setAttribute("href", downloadObjectUrl)
+                      anchor.setAttribute("download", fileName + ".webp")
+                      anchor.click()
+                      anchor.remove()
+                      URL.revokeObjectURL(downloadObjectUrl)
+                      resolve()
+                    }, "image/webp", 1)
+                  })
                 })
-                this.switchDisplayElements(elem, '')
                 return elem
             })
-            .then( (elem) => {
+            .catch((error) => {
+                console.error(error)
+            })
+            .finally(() => {
+                this.switchDisplayElements(elem, '')
                 elem.style.width = ''
                 elem.style.height = ''
                 let canvases = elem.querySelectorAll("canvas")
                 if (canvases.length) {
-                      canvases.forEach( (canvas) => {
-                      let ctx = canvas.getContext("2d");
-                      ctx.clearRect(0, 0, canvas.width, canvas.height)
-                  })
+                    canvases.forEach((canvas) => {
+                        let ctx = canvas.getContext("2d")
+                        ctx.clearRect(0, 0, canvas.width, canvas.height)
+                        canvas.width = 0
+                        canvas.height = 0
+                    })
                 }
+                this.loadedPromiseImages = []
             })
         }
       })
