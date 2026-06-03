@@ -449,7 +449,7 @@ export default {
       for (let i = 0; i < imgElements.length; i++) {
         await this.processOneElement(imgElements[i])
         if (i < imgElements.length - 1) {
-          await this.delay(400)
+          await this.delay(300)
         }
       }
     },
