@@ -71,10 +71,8 @@ export default {
                       delete: false
                     }
                   ],
-      fileName: '',
       localTargetElement: {},
       selectType: 'c3',
-      loadedPromiseImages: [],
       ctxSettings: {
           dx: 0,
           dy: 0,
@@ -175,24 +173,225 @@ export default {
             this.fullLoadItemImg = true
         }
     },
-    getItemLoadElements(itemElements) {
-        this.checkFullImgLoadsInItemLoadElements(itemElements)
-        if (this.fullLoadItemImg) {
-            if (itemElements.length) {
-                itemElements.forEach( (elem) => {
-                    let elemImg = elem.querySelector('img')
-                    let elemId = elemImg.id
-                    this.loadedPromiseImages.push(this.loadItemImage(elem, elemId))
-                })
-            }
+    getLocalDropTargetElement(elem) {
+        let layoutWrapper = elem.closest('[data-layout]')
+        if (!layoutWrapper) {
+            this.localTargetElement = {}
+            return
         }
+        let layoutIndex = parseInt(layoutWrapper.getAttribute('data-layout'), 10)
+        this.localTargetElement = this.dropTarget[layoutIndex] || {}
     },
-    getLocalDropTargetElement(index) {
-        this.dropTarget.forEach( (el) => {
-            if (el.index == index) {
-                this.localTargetElement = el
+    delay(ms) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms)
+        })
+    },
+    renderElementCanvases(elem, image) {
+        if (!elem.childNodes.length) {
+            return
+        }
+        this.getLocalDropTargetElement(elem)
+        elem.childNodes.forEach((item, ind) => {
+            this.srcWidth = image[ind].naturalWidth
+            this.srcHeight = image[ind].naturalHeight
+
+            let itemCanvas = item.querySelector("canvas")
+            itemCanvas.width = this.srcWidth
+            itemCanvas.height = this.srcHeight
+
+            if (this.localTargetElement.template == 'c1' || this.localTargetElement.template == 'g1') {
+                if (ind == 0) {
+                    this.ratioOneElement = Math.min(this.element_c1.ind_0.max_c1_width / itemCanvas.width, this.element_c1.ind_0.max_c1_height / itemCanvas.height)
+                    this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                    this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+                    this.coordXOneElement = parseInt((this.element_c1.ind_0.max_src_c1_width - this.loadOneElementWidth) / 2)
+                    this.coordYOneElement = parseInt((this.element_c1.ind_0.max_src_c1_height - this.loadOneElementHeight) / 2)
+
+                    itemCanvas.width = this.loadOneElementWidth
+                    itemCanvas.height = this.loadOneElementHeight
+
+                    this.ctxSettings.dx = this.coordXOneElement
+                    this.ctxSettings.dy = this.coordYOneElement
+
+                    itemCanvas.width = 660
+                    itemCanvas.height = 880
+                }
+                if (ind == 1 || ind == 2) {
+                    this.ratioOneElement = Math.min(this.element_c1.ind_1.max_c1_width / itemCanvas.width, this.element_c1.ind_1.max_c1_height / itemCanvas.height)
+                    this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                    this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+
+                    if (ind == 1) {
+                      this.coordXOneElement = 1
+                    }
+                    if (ind == 2) {
+                      this.coordXOneElement = 15
+                    }
+                    this.coordYOneElement = parseInt((this.element_c1.ind_1.max_src_c1_height - this.loadOneElementHeight) / 2)
+
+                    itemCanvas.width = this.loadOneElementWidth
+                    itemCanvas.height = this.loadOneElementHeight
+
+                    this.ctxSettings.dx = this.coordXOneElement
+                    this.ctxSettings.dy = this.coordYOneElement
+
+                    itemCanvas.width = 780
+                    itemCanvas.height = 880
+                }
+            }
+
+            if (this.localTargetElement.template == 'c2' || this.localTargetElement.template == 'g2') {
+                this.ratioOneElement = Math.min(this.max_c2_width / itemCanvas.width, this.max_c2_height / itemCanvas.height)
+                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+                this.coordXOneElement = parseInt((this.max_src_c2_width - this.loadOneElementWidth) / 2)
+                this.coordYOneElement = parseInt((this.max_src_c2_height - this.loadOneElementHeight) / 2)
+
+                itemCanvas.width = this.loadOneElementWidth
+                itemCanvas.height = this.loadOneElementHeight
+
+                this.ctxSettings.dx = this.coordXOneElement
+                this.ctxSettings.dy = this.coordYOneElement
+
+                itemCanvas.width = 871
+                itemCanvas.height = 880
+            }
+
+            if (this.localTargetElement.template == 'c3' || this.localTargetElement.template == 'g3') {
+                if (ind == 0 || ind == 2) {
+                    this.ratioOneElement = Math.min(this.max_c2_width / itemCanvas.width, this.max_c2_height / itemCanvas.height)
+                    this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                    this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+                    this.coordXOneElement = parseInt((this.max_src_c2_width - this.loadOneElementWidth) / 2)
+                    this.coordYOneElement = parseInt((this.max_src_c2_height - this.loadOneElementHeight) / 2)
+
+                    itemCanvas.width = this.loadOneElementWidth
+                    itemCanvas.height = this.loadOneElementHeight
+
+                    this.ctxSettings.dx = this.coordXOneElement
+                    this.ctxSettings.dy = this.coordYOneElement
+
+                    itemCanvas.width = 871
+                    itemCanvas.height = 880
+                }
+                if (ind == 1) {
+                    this.ratioOneElement = Math.min(this.max_c3_width / itemCanvas.width, this.max_c3_height / itemCanvas.height)
+                    this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
+                    this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
+                    this.coordXOneElement = parseInt((this.max_src_c3_width - this.loadOneElementWidth) / 2)
+                    this.coordYOneElement = 58
+
+                    itemCanvas.width = this.loadOneElementWidth
+                    itemCanvas.height = this.loadOneElementHeight
+
+                    this.ctxSettings.dx = this.coordXOneElement
+                    this.ctxSettings.dy = this.coordYOneElement
+
+                    itemCanvas.width = 348
+                    itemCanvas.height = 880
+                }
+            }
+
+            let ctx = itemCanvas.getContext('2d');
+            ctx.imageSmoothingQuality = "high";
+
+            ctx.scale(1, 1);
+            if (((this.localTargetElement.template !== 'c3') && (ind !== 1)) || ((this.localTargetElement.template !== 'g3') && (ind !== 1))) {
+                ctx.imageSmoothingEnabled = false;
+                ctx.shadowOffsetX = this.ctxSettings.shadowOffsetX;
+                ctx.shadowOffsetY = this.ctxSettings.shadowOffsetY;
+                ctx.shadowColor = this.ctxSettings.shadowColor;
+                ctx.shadowBlur = this.ctxSettings.shadowBlur;
+            }
+            else {
+                ctx.imageSmoothingEnabled = true;
+            }
+            this.ctxSettings.width = this.loadOneElementWidth
+            this.ctxSettings.height = this.loadOneElementHeight
+            ctx.drawImage(image[ind], parseInt(this.ctxSettings.dx), parseInt(this.ctxSettings.dy), parseInt(this.ctxSettings.width), parseInt(this.ctxSettings.height))
+
+            if (((this.localTargetElement.template == 'c3') && (ind == 1)) || ((this.localTargetElement.template == 'g3') && (ind == 1))) {
+                this.sharpen(ctx, this.ctxSettings.width+100, this.ctxSettings.height+100, this.elementSharpen * 0.1)
+            }
+            else {
+                this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
             }
         })
+    },
+    cleanupElementAfterExport(elem) {
+        this.switchDisplayElements(elem, '')
+        elem.style.width = ''
+        elem.style.height = ''
+        let canvases = elem.querySelectorAll("canvas")
+        if (canvases.length) {
+            canvases.forEach((canvas) => {
+                let ctx = canvas.getContext("2d")
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                canvas.width = 0
+                canvas.height = 0
+            })
+        }
+    },
+    exportElementAsWebp(elem) {
+        let layoutParent = elem.closest(".layout")
+        let numElement = layoutParent.querySelector(".num")
+        let fileName = numElement.innerHTML
+
+        this.switchDisplayElements(elem, 'none')
+
+        return html2canvas(elem, {logging : true, allowTaint: true, backgroundColor: "rgba(0,0,0,0)"})
+            .then((canvas) => {
+                return new Promise((resolve, reject) => {
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            reject(new Error("Failed to create webp blob"))
+                            return
+                        }
+                        let downloadObjectUrl = URL.createObjectURL(blob)
+                        let anchor = document.createElement('a')
+                        anchor.setAttribute("href", downloadObjectUrl)
+                        anchor.setAttribute("download", fileName + ".webp")
+                        anchor.click()
+                        anchor.remove()
+                        URL.revokeObjectURL(downloadObjectUrl)
+                        resolve()
+                    }, "image/webp", 1)
+                })
+            })
+            .finally(() => {
+                this.cleanupElementAfterExport(elem)
+            })
+    },
+    processOneElement(elem) {
+        let loadedPromiseImages = []
+        this.checkFullImgLoadsInItemLoadElements(elem.childNodes)
+        if (!this.fullLoadItemImg) {
+            return Promise.resolve()
+        }
+        if (elem.childNodes.length) {
+            elem.childNodes.forEach((childElem) => {
+                let elemImg = childElem.querySelector('img')
+                let elemId = elemImg.id
+                loadedPromiseImages.push(this.loadItemImage(childElem, elemId))
+            })
+        }
+        if (!loadedPromiseImages.length) {
+            return Promise.resolve()
+        }
+
+        elem.style.width = '1742px'
+        elem.style.height = '880px'
+
+        return Promise.all(loadedPromiseImages)
+            .then((image) => {
+                this.renderElementCanvases(elem, image)
+                return this.exportElementAsWebp(elem)
+            })
+            .catch((error) => {
+                console.error(error)
+                this.cleanupElementAfterExport(elem)
+            })
     },
     sharpen(ctx, w, h, mix) {
         var weights = [0, -1, 0, -1, 5, -1, 0, -1, 0],
@@ -245,205 +444,14 @@ export default {
 
         ctx.putImageData(dstData, 0, 0);
     },
-    download() {
+    async download() {
       let imgElements = document.querySelectorAll("#wrapDropTarget")
-      imgElements.forEach( (elem, index) => {
-        //обнулить массив с промисами для одого элемента
-        this.loadedPromiseImages = []
-        this.getItemLoadElements(elem.childNodes)
-
-        if (this.loadedPromiseImages.length) {
-            elem.style.width = '1742px'
-            elem.style.height = '880px'
-            Promise.all(this.loadedPromiseImages)
-            .then( (image) => {
-                if (elem.childNodes.length) {
-                    elem.childNodes.forEach( (item, ind) => {
-
-                        //получить шаблон c1 или c2, c3 или g1 или g2, g3 для текущего набора изображений
-                        this.localTargetElement = {}
-                        this.getLocalDropTargetElement(index)
-
-                        this.srcWidth = image[ind].naturalWidth
-                        this.srcHeight = image[ind].naturalHeight
-
-                        let itemCanvas = item.querySelector("canvas")
-                        itemCanvas.width = this.srcWidth
-                        itemCanvas.height = this.srcHeight
-
-                        if (this.localTargetElement.template == 'c1' || this.localTargetElement.template == 'g1') {
-                            if (ind == 0) {
-                                this.ratioOneElement = Math.min(this.element_c1.ind_0.max_c1_width / itemCanvas.width, this.element_c1.ind_0.max_c1_height / itemCanvas.height)
-                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
-                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
-                                this.coordXOneElement = parseInt((this.element_c1.ind_0.max_src_c1_width - this.loadOneElementWidth) / 2)
-                                this.coordYOneElement = parseInt((this.element_c1.ind_0.max_src_c1_height - this.loadOneElementHeight) / 2)
-                                
-                                itemCanvas.width = this.loadOneElementWidth
-                                itemCanvas.height = this.loadOneElementHeight
-
-                                this.ctxSettings.dx = this.coordXOneElement
-                                this.ctxSettings.dy = this.coordYOneElement
-
-                                itemCanvas.width = 660
-                                itemCanvas.height = 880
-                            }
-                            if (ind == 1 || ind == 2) {
-                                this.ratioOneElement = Math.min(this.element_c1.ind_1.max_c1_width / itemCanvas.width, this.element_c1.ind_1.max_c1_height / itemCanvas.height)
-                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
-                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
-
-                                if (ind == 1) {
-                                  this.coordXOneElement = 1
-                                }
-                                if (ind == 2) {
-                                  this.coordXOneElement = 15
-                                }
-                                this.coordYOneElement = parseInt((this.element_c1.ind_1.max_src_c1_height - this.loadOneElementHeight) / 2)
-                                
-                                itemCanvas.width = this.loadOneElementWidth
-                                itemCanvas.height = this.loadOneElementHeight
-
-                                this.ctxSettings.dx = this.coordXOneElement
-                                this.ctxSettings.dy = this.coordYOneElement
-
-                                itemCanvas.width = 780
-                                itemCanvas.height = 880
-                            }
-                        }
-                        
-                        if (this.localTargetElement.template == 'c2' || this.localTargetElement.template == 'g2') {
-                            this.ratioOneElement = Math.min(this.max_c2_width / itemCanvas.width, this.max_c2_height / itemCanvas.height)
-                            this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
-                            this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
-                            this.coordXOneElement = parseInt((this.max_src_c2_width - this.loadOneElementWidth) / 2)
-                            this.coordYOneElement = parseInt((this.max_src_c2_height - this.loadOneElementHeight) / 2)
-
-                            itemCanvas.width = this.loadOneElementWidth
-                            itemCanvas.height = this.loadOneElementHeight
-
-                            this.ctxSettings.dx = this.coordXOneElement
-                            this.ctxSettings.dy = this.coordYOneElement
-
-                            itemCanvas.width = 871
-                            itemCanvas.height = 880
-                        }
-
-                        if (this.localTargetElement.template == 'c3' || this.localTargetElement.template == 'g3') {
-                            if (ind == 0 || ind == 2) {
-                                this.ratioOneElement = Math.min(this.max_c2_width / itemCanvas.width, this.max_c2_height / itemCanvas.height)
-                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
-                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
-                                this.coordXOneElement = parseInt((this.max_src_c2_width - this.loadOneElementWidth) / 2)
-                                this.coordYOneElement = parseInt((this.max_src_c2_height - this.loadOneElementHeight) / 2)
-
-                                itemCanvas.width = this.loadOneElementWidth
-                                itemCanvas.height = this.loadOneElementHeight
-
-                                this.ctxSettings.dx = this.coordXOneElement
-                                this.ctxSettings.dy = this.coordYOneElement
-
-                                itemCanvas.width = 871
-                                itemCanvas.height = 880
-                            }
-                            if (ind == 1) {
-                                this.ratioOneElement = Math.min(this.max_c3_width / itemCanvas.width, this.max_c3_height / itemCanvas.height)
-                                this.loadOneElementWidth = parseInt(itemCanvas.width * this.ratioOneElement)
-                                this.loadOneElementHeight = parseInt(itemCanvas.height * this.ratioOneElement)
-                                this.coordXOneElement = parseInt((this.max_src_c3_width - this.loadOneElementWidth) / 2)
-                                this.coordYOneElement = 58
-
-                                itemCanvas.width = this.loadOneElementWidth
-                                itemCanvas.height = this.loadOneElementHeight
-
-                                this.ctxSettings.dx = this.coordXOneElement
-                                this.ctxSettings.dy = this.coordYOneElement
-
-                                itemCanvas.width = 348
-                                itemCanvas.height = 880
-                            }
-                        }
-
-                        let ctx = itemCanvas.getContext('2d');
-                        ctx.imageSmoothingQuality = "high";
-                        
-                        ctx.scale(1, 1);
-                        if (((this.localTargetElement.template !== 'c3') && (ind !== 1)) || ((this.localTargetElement.template !== 'g3') && (ind !== 1))) {
-                            ctx.imageSmoothingEnabled = false;
-                            ctx.shadowOffsetX = this.ctxSettings.shadowOffsetX;
-                            ctx.shadowOffsetY = this.ctxSettings.shadowOffsetY;
-                            ctx.shadowColor = this.ctxSettings.shadowColor;
-                            ctx.shadowBlur = this.ctxSettings.shadowBlur;
-                        }
-                        else {
-                            ctx.imageSmoothingEnabled = true;
-                        }
-                        this.ctxSettings.width = this.loadOneElementWidth
-                        this.ctxSettings.height = this.loadOneElementHeight
-                        ctx.drawImage(image[ind], parseInt(this.ctxSettings.dx), parseInt(this.ctxSettings.dy), parseInt(this.ctxSettings.width), parseInt(this.ctxSettings.height))
-
-                        if (((this.localTargetElement.template == 'c3') && (ind == 1)) || ((this.localTargetElement.template == 'g3') && (ind == 1))) {
-                            this.sharpen(ctx, this.ctxSettings.width+100, this.ctxSettings.height+100, this.elementSharpen * 0.1)
-                        }
-                        else {
-                            this.sharpen(ctx, this.ctxSettings.width, this.ctxSettings.height, this.elementSharpen * 0.01)
-                        }
-                    })
-                }
-                return elem
-            })
-            .then( (elem) => {
-                this.switchDisplayElements(elem, 'none')
-                let layoutParent = elem.closest(".layout")
-                let numElement = layoutParent.querySelector(".num")
-                this.fileName = ''
-                this.fileName = numElement.innerHTML
-                
-                return elem
-            })
-            .then( (elem) => {
-                let fileName = this.fileName
-                return html2canvas(elem, {logging : true, allowTaint: true, backgroundColor: "rgba(0,0,0,0)"})
-                .then((canvas) => {
-                  return new Promise((resolve, reject) => {
-                    canvas.toBlob((blob) => {
-                      if (!blob) {
-                        reject(new Error("Failed to create webp blob"))
-                        return
-                      }
-                      let downloadObjectUrl = URL.createObjectURL(blob)
-                      let anchor = document.createElement('a')
-                      anchor.setAttribute("href", downloadObjectUrl)
-                      anchor.setAttribute("download", fileName + ".webp")
-                      anchor.click()
-                      anchor.remove()
-                      URL.revokeObjectURL(downloadObjectUrl)
-                      resolve()
-                    }, "image/webp", 1)
-                  })
-                })
-                return elem
-            })
-            .catch((error) => {
-                console.error(error)
-            })
-            .finally(() => {
-                this.switchDisplayElements(elem, '')
-                elem.style.width = ''
-                elem.style.height = ''
-                let canvases = elem.querySelectorAll("canvas")
-                if (canvases.length) {
-                    canvases.forEach((canvas) => {
-                        let ctx = canvas.getContext("2d")
-                        ctx.clearRect(0, 0, canvas.width, canvas.height)
-                        canvas.width = 0
-                        canvas.height = 0
-                    })
-                }
-                this.loadedPromiseImages = []
-            })
+      for (let i = 0; i < imgElements.length; i++) {
+        await this.processOneElement(imgElements[i])
+        if (i < imgElements.length - 1) {
+          await this.delay(400)
         }
-      })
+      }
     },
     switchDisplayElements(elem, disp) {
       let imgsElements = elem.querySelectorAll("img")
