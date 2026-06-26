@@ -1,5 +1,5 @@
 export default {
-    beforeDestroy() {
+    beforeUnmount() {
         this.cleanupLoadedImageUrls()
     },
     methods: {
